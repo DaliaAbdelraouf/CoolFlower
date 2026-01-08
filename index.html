@@ -133,15 +133,20 @@
   }
 
   /* ======= ADDED: Made with love footer ======= */
-  .made-with-love {
-    position: absolute;
-    bottom: 18px;
-    font-size: clamp(14px, 2.5vw, 18px);
-    color: #444;
-    opacity: 0.8;
-    animation: heartbeat 1.6s infinite;
-    z-index: 2;
-  }
+/* FIX: Mobile-safe footer */
+.made-with-love {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 16px) + 20px); /* <-- moved UP */
+  left: 40%; /* <-- center horizontally */
+  transform: translateX(-50%);
+  font-size: clamp(14px, 2.5vw, 18px);
+  color: #444;
+  opacity: 0.85;
+  animation: heartbeat 1.6s infinite;
+  z-index: 999;
+  pointer-events: none;
+}
+
 
   @keyframes heartbeat {
     0%   { transform: scale(1); }
