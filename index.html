@@ -262,6 +262,13 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   });
+
+  window.addEventListener('load', () => {
+  moodPage.style.display = 'flex';
+  flowersPage.style.display = 'none';
+  flowers = []; // reset flowers animation
+});
+
 </script>
 </body>
 </html>
