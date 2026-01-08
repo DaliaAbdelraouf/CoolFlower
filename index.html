@@ -26,15 +26,16 @@
   }
 
   #moodPage h1 {
-    font-size: 3em;
+    font-size: 4vw; /* responsive font size */
   }
 
   #moodPage img {
-    width: 200px;
+    width: 25vw; /* responsive width */
+    max-width: 250px;
     height: auto;
     border-radius: 12px;
     margin-bottom: 20px;
-    transition: transform 0.2s;
+    transition: transform 0.3s;
   }
 
   #moodPage img:hover {
@@ -43,25 +44,28 @@
 
   #moodButtons {
     display: flex;
+    flex-wrap: wrap;
     gap: 15px;
+    justify-content: center;
   }
 
   #moodButtons button {
-    padding: 12px 20px;
-    font-size: 18px;
+    padding: 1.2vw 2vw; /* responsive padding */
+    font-size: 1.5vw; /* responsive font size */
+    min-width: 100px; /* prevent too small */
     border: none;
     border-radius: 12px;
     cursor: pointer;
     background: #ff4d4d; /* bright red */
     color: white;
-    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
     position: relative;
     overflow: hidden;
   }
 
   /* Hover effect: bounce + shadow */
   #moodButtons button:hover {
-    transform: scale(1.15) rotate(-2deg);
+    transform: scale(1.2) rotate(-2deg);
     background: #ff6666;
     box-shadow: 0 5px 15px rgba(255,0,0,0.4);
   }
@@ -77,6 +81,17 @@
     opacity: 0;
     pointer-events: none;
     animation: sparkle 1s infinite;
+  }
+  #moodPage h1 {
+    font-size: clamp(24px, 6vw, 48px); /* min 24px, max 48px, scales with viewport */
+  }
+
+  #flowersPage h1 {
+    font-size: clamp(24px, 6vw, 48px);
+  }
+
+  #flowersPage p {
+    font-size: clamp(16px, 3vw, 24px);
   }
 
   @keyframes sparkle {
@@ -111,9 +126,20 @@
     color: #333;
     text-align: center;
   }
-  #flowersPage h1 { font-size: 3em; }
-  #flowersPage p { font-size: 1.5em; }
+
+  #flowersPage h1 { font-size: 4vw; }
+  #flowersPage p { font-size: 2vw; }
+
   canvas { position: absolute; top: 0; left: 0; z-index: 0; }
+
+  /* Media queries for very small screens */
+  @media(max-width: 500px){
+    #moodPage h1 { font-size: 6vw; }
+    #moodButtons button { font-size: 3vw; padding: 3vw 4vw; }
+    #flowersPage h1 { font-size: 6vw; }
+    #flowersPage p { font-size: 4vw; }
+  }
+
 </style>
 </head>
 <body>
@@ -144,7 +170,6 @@
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
-  // ROUTE TO FLOWERS PAGE
   function showFlowers() {
     moodPage.style.display = 'none';
     flowersPage.style.display = 'flex';
@@ -165,6 +190,7 @@
     }
     requestAnimationFrame(animateFlowers);
   }
+
   function animateFlowers() {
     ctx.clearRect(0,0,canvas.width,canvas.height);
     for (let f of flowers) {
@@ -181,7 +207,7 @@
     requestAnimationFrame(animateFlowers);
   }
 
-  // FLOATING RED PETALS ON FIRST PAGE
+  // PETALS ON FIRST PAGE
   function createPetal() {
     const petal = document.createElement('div');
     petal.classList.add('petal');
@@ -197,16 +223,13 @@
       petal.style.top = top + petal.speed + 'px';
       petal.style.left = left + Math.sin(petal.angle) * 2 + 'px';
       petal.angle += 0.05;
-      if (top > window.innerHeight) {
-        petal.remove();
-      } else {
-        requestAnimationFrame(movePetal);
-      }
+      if (top > window.innerHeight) petal.remove();
+      else requestAnimationFrame(movePetal);
     }
     movePetal();
   }
 
-  setInterval(createPetal, 300); // every 0.3s
+  setInterval(createPetal, 300);
 
   window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
