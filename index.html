@@ -2,14 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+
+<!-- FIX: viewport stays stable on mobile -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Flowers Mood Page</title>
 
 <style>
   body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    overflow: hidden;
+    overflow: hidden; /* OK because we control height manually */
   }
 
   /* ================= FIRST PAGE ================= */
@@ -18,7 +21,10 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+
+    /* FIX: use stable mobile height instead of 100vh */
+    height: calc(var(--vh) * 100);
+
     background: #ffb6c1;
     color: white;
     text-align: center;
@@ -27,7 +33,7 @@
   }
 
   #moodPage h1 {
-    font-size: clamp(24px, 6vw, 48px); /* responsive h1 */
+    font-size: clamp(24px, 6vw, 48px);
   }
 
   #moodPage img {
@@ -51,8 +57,8 @@
   }
 
   #moodButtons button {
-    padding: clamp(10px, 2vw, 18px) clamp(18px, 4vw, 32px); /* responsive size */
-    font-size: clamp(14px, 3vw, 18px); /* responsive text */
+    padding: clamp(10px, 2vw, 18px) clamp(18px, 4vw, 32px);
+    font-size: clamp(14px, 3vw, 18px);
     min-width: 110px;
     border: none;
     border-radius: 14px;
@@ -88,7 +94,6 @@
     100% { transform: translate(6px,-24px) scale(0); opacity: 0; }
   }
 
-  /* Floating red petals */
   .petal {
     position: absolute;
     width: 10px;
@@ -104,7 +109,10 @@
     display: none;
     position: relative;
     width: 100vw;
-    height: 100vh;
+
+    /* FIX: stable height for mobile */
+    height: calc(var(--vh) * 100);
+
     background: #a0e7e5;
     display: flex;
     flex-direction: column;
@@ -115,13 +123,8 @@
     text-align: center;
   }
 
-  #flowersPage h1 {
-    font-size: clamp(24px, 6vw, 48px);
-    z-index: 2;
-  }
-
+  #flowersPage h1,
   #flowersPage p {
-    font-size: clamp(16px, 3vw, 24px);
     z-index: 2;
   }
 
@@ -132,25 +135,31 @@
     z-index: 0;
   }
 
-  /* ======= ADDED: Made with love footer ======= */
-/* FIX: Mobile-safe footer */
-.made-with-love {
-  position: fixed;
-  bottom: calc(env(safe-area-inset-bottom, 16px) + 20px); /* <-- moved UP */
-  left: 50%; /* <-- center horizontally */
-  transform: translateX(-50%);
-  font-size: clamp(14px, 2.5vw, 18px);
-  color: #444;
-  opacity: 0.85;
-  z-index: 999;
-  pointer-events: none;
-}
+  /* ======= FIXED FOOTER ======= */
+  .made-with-love {
+    position: fixed;
 
+    /* FIX: pixel-based bottom prevents jump */
+    bottom: 40px;
+
+    left: 50%;
+    transform: translateX(-50%);
+
+    font-size: clamp(14px, 2.5vw, 18px);
+    color: #444;
+    opacity: 0.85;
+
+    z-index: 999;
+    pointer-events: none;
+
+    /* OPTIONAL: soft animation */
+    animation: heartbeat 1.6s infinite;
+  }
 
   @keyframes heartbeat {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.1); }
-    100% { transform: scale(1); }
+    0%   { transform: translateX(-50%) scale(1); }
+    50%  { transform: translateX(-50%) scale(1.1); }
+    100% { transform: translateX(-50%) scale(1); }
   }
 </style>
 </head>
@@ -177,18 +186,33 @@
 
   <canvas id="flowersCanvas"></canvas>
 
-  <!-- ADDED FOOTER -->
   <div class="made-with-love">Made with love by your Best Friend 💖</div>
 </div>
 
 <script>
+  /* FIX: true mobile viewport height */
+  function setVH() {
+    document.documentElement.style.setProperty(
+      '--vh',
+      `${window.innerHeight * 0.01}px`
+    );
+  }
+
+  setVH(); // run once
+  window.addEventListener('resize', setVH); // update on resize
+
   const moodPage = document.getElementById('moodPage');
   const flowersPage = document.getElementById('flowersPage');
   const canvas = document.getElementById('flowersCanvas');
   const ctx = canvas.getContext('2d');
 
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
 
   function showFlowers() {
     moodPage.style.display = 'none';
@@ -196,9 +220,9 @@
     startBlooming();
   }
 
-  /* Flower animation */
   let flowers = [];
   function startBlooming() {
+    flowers = [];
     for (let i = 0; i < 50; i++) {
       flowers.push({
         x: Math.random() * canvas.width,
@@ -206,7 +230,7 @@
         size: 5 + Math.random() * 10,
         speed: 1 + Math.random() * 2,
         color: ['#ffb6b9','#fae1dd','#fcd5ce','#ffaaa5']
-               [Math.floor(Math.random() * 4)]
+          [Math.floor(Math.random() * 4)]
       });
     }
     requestAnimationFrame(animateFlowers);
@@ -228,7 +252,6 @@
     requestAnimationFrame(animateFlowers);
   }
 
-  /* Petals on first page */
   function createPetal() {
     const petal = document.createElement('div');
     petal.classList.add('petal');
@@ -251,11 +274,6 @@
   }
 
   setInterval(createPetal, 300);
-
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
 </script>
 
 </body>
