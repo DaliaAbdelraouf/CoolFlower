@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flowers Mood Page</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    overflow: hidden;
+  }
+
+  /* FIRST PAGE */
+  #moodPage {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #ffb6c1; /* pink background */
+    color: white;
+    text-align: center;
+    gap: 20px;
+    position: relative;
+  }
+
+  #moodPage h1 {
+    font-size: 3em;
+  }
+
+  #moodPage img {
+    width: 200px;
+    height: auto;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    transition: transform 0.2s;
+  }
+
+  #moodPage img:hover {
+    transform: scale(1.1) rotate(-5deg);
+  }
+
+  #moodButtons {
+    display: flex;
+    gap: 15px;
+  }
+
+  #moodButtons button {
+    padding: 12px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #ff4d4d; /* bright red */
+    color: white;
+    transition: transform 0.2s, background 0.2s, box-shadow 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Hover effect: bounce + shadow */
+  #moodButtons button:hover {
+    transform: scale(1.15) rotate(-2deg);
+    background: #ff6666;
+    box-shadow: 0 5px 15px rgba(255,0,0,0.4);
+  }
+
+  /* Floating sparkles inside buttons */
+  #moodButtons button::after {
+    content: '';
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: yellow;
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    animation: sparkle 1s infinite;
+  }
+
+  @keyframes sparkle {
+    0% { transform: translate(0,0) scale(0); opacity: 0; }
+    50% { transform: translate(-5px,-10px) scale(1); opacity: 1; }
+    100% { transform: translate(5px,-20px) scale(0); opacity: 0; }
+  }
+
+  /* floating red petals */
+  .petal {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: #ff1a1a; /* red */
+    border-radius: 50%;
+    opacity: 0.8;
+    pointer-events: none;
+  }
+
+  /* FLOWERS PAGE */
+  #flowersPage {
+    display: none;
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    background: #a0e7e5;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    color: #333;
+    text-align: center;
+  }
+  #flowersPage h1 { font-size: 3em; }
+  #flowersPage p { font-size: 1.5em; }
+  canvas { position: absolute; top: 0; left: 0; z-index: 0; }
+</style>
+</head>
+<body>
+
+<div id="moodPage">
+  <img src="mitao-cat.gif" alt="fun gif">
+  <h1>How was your day? 🌸</h1>
+  <div id="moodButtons">
+    <button onclick="showFlowers()">Good</button>
+    <button onclick="showFlowers()">Stressed</button>
+    <button onclick="showFlowers()">Fine</button>
+    <button onclick="showFlowers()">Happy</button>
+  </div>
+</div>
+
+<div id="flowersPage">
+  <h1>🌸 Look! Flowers just for you! ✨ 🌸</h1>
+  <p>Take a breath, you’re doing great.</p>
+  <canvas id="flowersCanvas"></canvas>
+</div>
+
+<script>
+  const moodPage = document.getElementById('moodPage');
+  const flowersPage = document.getElementById('flowersPage');
+  const canvas = document.getElementById('flowersCanvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  // ROUTE TO FLOWERS PAGE
+  function showFlowers() {
+    moodPage.style.display = 'none';
+    flowersPage.style.display = 'flex';
+    startBlooming();
+  }
+
+  // FLOWERS ANIMATION
+  let flowers = [];
+  function startBlooming() {
+    for (let i = 0; i < 50; i++) {
+      flowers.push({
+        x: Math.random() * canvas.width,
+        y: canvas.height + Math.random() * 100,
+        size: 5 + Math.random() * 10,
+        speed: 1 + Math.random() * 2,
+        color: ['#ffb6b9','#fae1dd','#fcd5ce','#ffaaa5'][Math.floor(Math.random()*4)]
+      });
+    }
+    requestAnimationFrame(animateFlowers);
+  }
+  function animateFlowers() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (let f of flowers) {
+      ctx.beginPath();
+      ctx.arc(f.x, f.y, f.size, 0, Math.PI * 2);
+      ctx.fillStyle = f.color;
+      ctx.fill();
+      f.y -= f.speed;
+      if (f.y < -f.size) {
+        f.y = canvas.height + f.size;
+        f.x = Math.random() * canvas.width;
+      }
+    }
+    requestAnimationFrame(animateFlowers);
+  }
+
+  // FLOATING RED PETALS ON FIRST PAGE
+  function createPetal() {
+    const petal = document.createElement('div');
+    petal.classList.add('petal');
+    petal.style.left = Math.random() * window.innerWidth + 'px';
+    petal.style.top = '-20px';
+    petal.speed = 1 + Math.random() * 2;
+    petal.angle = Math.random() * 360;
+    moodPage.appendChild(petal);
+
+    function movePetal() {
+      let top = parseFloat(petal.style.top);
+      let left = parseFloat(petal.style.left);
+      petal.style.top = top + petal.speed + 'px';
+      petal.style.left = left + Math.sin(petal.angle) * 2 + 'px';
+      petal.angle += 0.05;
+      if (top > window.innerHeight) {
+        petal.remove();
+      } else {
+        requestAnimationFrame(movePetal);
+      }
+    }
+    movePetal();
+  }
+
+  setInterval(createPetal, 300); // every 0.3s
+
+  window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  });
+</script>
+</body>
+</html>
