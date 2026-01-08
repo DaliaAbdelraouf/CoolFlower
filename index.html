@@ -115,13 +115,23 @@
   position: absolute;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%); /* Shifts the element back to the true center */
+  transform: translateX(-50%);
   
+  text-align: center; /* Essential for centering multi-line text */
+  width: max-content; /* Keeps the container tight to the text */
   font-size: clamp(14px, 2.5vw, 18px);
   color: #444;
   opacity: 0.8;
   animation: heartbeat 1.5s infinite;
   z-index: 2;
+}
+
+/* On screens smaller than 600px, force the name to a new line */
+@media (max-width: 600px) {
+  .made-with-love span {
+    display: block; 
+    margin-top: 5px; /* Adds a tiny bit of breathing room between lines */
+  }
 }
 
   /* FLOWERS PAGE */
@@ -176,10 +186,8 @@
 
 <!-- Made with love footer -->
 <div class="made-with-love">
-  Made with love  by your Best Friend 💖
+  made with love by <span>your Best Friend 💖</span>
 </div>
-
-
 <script>
   const moodPage = document.getElementById('moodPage');
   const flowersPage = document.getElementById('flowersPage');
