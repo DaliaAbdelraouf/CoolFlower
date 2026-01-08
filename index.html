@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Flowers Mood Page</title>
+
 <style>
   body {
     margin: 0;
@@ -11,14 +12,14 @@
     overflow: hidden;
   }
 
-  /* FIRST PAGE */
+  /* ================= FIRST PAGE ================= */
   #moodPage {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: #ffb6c1; /* pink background */
+    background: #ffb6c1;
     color: white;
     text-align: center;
     gap: 20px;
@@ -26,11 +27,11 @@
   }
 
   #moodPage h1 {
-    font-size: 4vw; /* responsive font size */
+    font-size: clamp(24px, 6vw, 48px); /* responsive h1 */
   }
 
   #moodPage img {
-    width: 25vw; /* responsive width */
+    width: 25vw;
     max-width: 250px;
     height: auto;
     border-radius: 12px;
@@ -50,68 +51,55 @@
   }
 
   #moodButtons button {
-    padding: 1.2vw 2vw; /* responsive padding */
-    font-size: 1.5vw; /* responsive font size */
-    min-width: 100px; /* prevent too small */
+    padding: clamp(10px, 2vw, 18px) clamp(18px, 4vw, 32px); /* responsive size */
+    font-size: clamp(14px, 3vw, 18px); /* responsive text */
+    min-width: 110px;
     border: none;
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
-    background: #ff4d4d; /* bright red */
+    background: #ff4d4d;
     color: white;
     transition: transform 0.3s, background 0.3s, box-shadow 0.3s;
     position: relative;
     overflow: hidden;
   }
 
-  /* Hover effect: bounce + shadow */
   #moodButtons button:hover {
-    transform: scale(1.2) rotate(-2deg);
+    transform: scale(1.15) rotate(-2deg);
     background: #ff6666;
-    box-shadow: 0 5px 15px rgba(255,0,0,0.4);
+    box-shadow: 0 6px 18px rgba(255,0,0,0.4);
   }
 
-  /* Floating sparkles inside buttons */
+  /* Sparkle effect */
   #moodButtons button::after {
     content: '';
     position: absolute;
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
     background: yellow;
     border-radius: 50%;
     opacity: 0;
-    pointer-events: none;
     animation: sparkle 1s infinite;
-  }
-  #moodPage h1 {
-    font-size: clamp(24px, 6vw, 48px); /* min 24px, max 48px, scales with viewport */
-  }
-
-  #flowersPage h1 {
-    font-size: clamp(24px, 6vw, 48px);
-  }
-
-  #flowersPage p {
-    font-size: clamp(16px, 3vw, 24px);
   }
 
   @keyframes sparkle {
     0% { transform: translate(0,0) scale(0); opacity: 0; }
-    50% { transform: translate(-5px,-10px) scale(1); opacity: 1; }
-    100% { transform: translate(5px,-20px) scale(0); opacity: 0; }
+    50% { transform: translate(-6px,-12px) scale(1); opacity: 1; }
+    100% { transform: translate(6px,-24px) scale(0); opacity: 0; }
   }
 
-  /* floating red petals */
+  /* Floating red petals */
   .petal {
     position: absolute;
     width: 10px;
     height: 10px;
-    background: #ff1a1a; /* red */
+    background: #ff1a1a;
     border-radius: 50%;
     opacity: 0.8;
     pointer-events: none;
   }
 
-  /* FLOWERS PAGE */
+  /* ================= FLOWERS PAGE ================= */
   #flowersPage {
     display: none;
     position: relative;
@@ -127,26 +115,49 @@
     text-align: center;
   }
 
-  #flowersPage h1 { font-size: 4vw; }
-  #flowersPage p { font-size: 2vw; }
-
-  canvas { position: absolute; top: 0; left: 0; z-index: 0; }
-
-  /* Media queries for very small screens */
-  @media(max-width: 500px){
-    #moodPage h1 { font-size: 6vw; }
-    #moodButtons button { font-size: 3vw; padding: 3vw 4vw; }
-    #flowersPage h1 { font-size: 6vw; }
-    #flowersPage p { font-size: 4vw; }
+  #flowersPage h1 {
+    font-size: clamp(24px, 6vw, 48px);
+    z-index: 2;
   }
 
+  #flowersPage p {
+    font-size: clamp(16px, 3vw, 24px);
+    z-index: 2;
+  }
+
+  canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
+
+  /* ======= ADDED: Made with love footer ======= */
+  .made-with-love {
+    position: absolute;
+    bottom: 18px;
+    font-size: clamp(14px, 2.5vw, 18px);
+    color: #444;
+    opacity: 0.8;
+    animation: heartbeat 1.6s infinite;
+    z-index: 2;
+  }
+
+  @keyframes heartbeat {
+    0%   { transform: scale(1); }
+    50%  { transform: scale(1.1); }
+    100% { transform: scale(1); }
+  }
 </style>
 </head>
+
 <body>
 
+<!-- ================= FIRST PAGE ================= -->
 <div id="moodPage">
   <img src="mitao-cat.gif" alt="fun gif">
   <h1>How was your day? 🌸</h1>
+
   <div id="moodButtons">
     <button onclick="showFlowers()">Good</button>
     <button onclick="showFlowers()">Stressed</button>
@@ -155,10 +166,15 @@
   </div>
 </div>
 
+<!-- ================= FLOWERS PAGE ================= -->
 <div id="flowersPage">
-  <h1>🌸 Look! Flowers just for you! ✨ 🌸</h1>
+  <h1>🌸 Look! Flowers just for you! ✨🌸🌷</h1>
   <p>Take a breath, you’re doing great.</p>
+
   <canvas id="flowersCanvas"></canvas>
+
+  <!-- ADDED FOOTER -->
+  <div class="made-with-love">Made with love by your Best Friend 💖</div>
 </div>
 
 <script>
@@ -176,7 +192,7 @@
     startBlooming();
   }
 
-  // FLOWERS ANIMATION
+  /* Flower animation */
   let flowers = [];
   function startBlooming() {
     for (let i = 0; i < 50; i++) {
@@ -185,7 +201,8 @@
         y: canvas.height + Math.random() * 100,
         size: 5 + Math.random() * 10,
         speed: 1 + Math.random() * 2,
-        color: ['#ffb6b9','#fae1dd','#fcd5ce','#ffaaa5'][Math.floor(Math.random()*4)]
+        color: ['#ffb6b9','#fae1dd','#fcd5ce','#ffaaa5']
+               [Math.floor(Math.random() * 4)]
       });
     }
     requestAnimationFrame(animateFlowers);
@@ -207,7 +224,7 @@
     requestAnimationFrame(animateFlowers);
   }
 
-  // PETALS ON FIRST PAGE
+  /* Petals on first page */
   function createPetal() {
     const petal = document.createElement('div');
     petal.classList.add('petal');
@@ -236,5 +253,6 @@
     canvas.height = window.innerHeight;
   });
 </script>
+
 </body>
 </html>
